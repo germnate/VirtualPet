@@ -1,0 +1,45 @@
+# Build output
+bin/
+obj/
+
+# EF Core Migrations build artifacts
+Migrations/*Designer.cs
+Migrations/*Snapshot.cs
+
+# SQLite database files
+*.db
+*.db-shm
+*.db-wal
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# Visual Studio
+.vs/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Dotnet tools local manifest
+.dotnet-tools.json
+
+# Environment files
+*.env
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# OS-specific
+.DS_Store
+Thumbs.db
