@@ -1,0 +1,23 @@
+body {
+    background: #222;
+    color: white;
+    font-family: sans-serif;
+    text-align: center;
+}
+
+#app {
+    display: grid;
+    grid-template-rows: minmax(300px,1fr) auto auto;
+    place-items: center;
+}
+
+#fox {
+    width: 200px;
+    image-rendering: pixelated;
+}
+
+#buttons button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 18px;
+}

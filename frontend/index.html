@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Virtual Fox</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+    <img id="fox" src="sprites/idle-1.png" />
+
+    <div id="stats">
+        <div>Hunger: <span id="hunger"></span></div>
+        <div>Energy: <span id="energy"></span></div>
+        <div>Happiness: <span id="happiness"></span></div>
+        <div>Mood: <span id="mood"></span></div>
+    </div>
+
+    <div id="buttons">
+        <button onclick="handleFeed()">Feed</button>
+        <button onclick="handlePlay()">Play</button>
+        <button onclick="handleSleep()">Sleep</button>
+        <button onclick="handleWake()">Wake</button>
+    </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

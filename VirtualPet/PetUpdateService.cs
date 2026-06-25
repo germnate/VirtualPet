@@ -39,6 +39,9 @@ public class PetUpdateService : BackgroundService
 
         if (pet.Energy < 20)
             pet.Happiness = Math.Max(0, pet.Happiness - 1);
+        
+        if (pet.State == "sleep" && pet.Energy < 100)
+            pet.Energy = Math.Min(100, pet.Energy + 2);
 
         pet.LastUpdated = DateTime.UtcNow;
     }
