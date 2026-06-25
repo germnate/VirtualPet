@@ -42,7 +42,8 @@ async function refreshPet() {
 async function handleFeed() {
     const pet = await feedPet();
     currentState = pet.state;
-    refreshPet();
+    await refreshPet();
+    setTimeout(handleWake, 1000);
 }
 
 async function handlePlay() {
@@ -58,6 +59,7 @@ async function handleSleep() {
 }
 
 async function handleWake() {
+    console.log('wake');
     const pet = await wakePet();
     currentState = pet.state;
     refreshPet();
