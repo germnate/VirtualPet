@@ -28,13 +28,15 @@ async function wakePet() {
 
 async function refreshPet() {
     const pet = await getPet();
-
+    
     document.getElementById("hunger").textContent = pet.hunger;
     document.getElementById("energy").textContent = pet.energy;
     document.getElementById("happiness").textContent = pet.happiness;
     document.getElementById("mood").textContent = pet.mood;
-
+    
     currentState = pet.state;
+    const img = document.getElementById("fox");
+    img.src = `sprites/${currentState}-${1}.png`;
 }
 
 async function handleFeed() {
@@ -61,13 +63,13 @@ async function handleWake() {
     refreshPet();
 }
 
-function animate() {
-    const img = document.getElementById("fox");
-    img.src = `sprites/${currentState}-${1}.png`;
+// function animate() {
+//     const img = document.getElementById("fox");
+//     img.src = `sprites/${currentState}-${1}.png`;
 
-    frame = (frame + 1) % 4;
-    setTimeout(animate, 400);
-}
+//     frame = (frame + 1) % 4;
+//     setTimeout(animate, 400);
+// }
 
-animate();
+// animate();
 refreshPet();
