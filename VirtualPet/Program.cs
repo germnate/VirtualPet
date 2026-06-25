@@ -9,6 +9,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<PetDbContext>(options =>
     options.UseSqlite("Data Source=pet.db"));
 
+builder.Services.AddScoped<PetService>();
+builder.Services.AddHostedService<PetUpdateService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,6 +40,32 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
+
+app.MapGet("/pet", async (PetService service) =>
+{
+    return await service.GetAsync();
+});
+
+app.MapPost("/pet/feed", async (PetService service) =>
+{
+    return await service.FeedAsync();
+});
+
+app.MapPost("/pet/play", async (PetService service) =>
+{
+    return await service.PlayAsync();
+});
+
+app.MapPost("/pet/sleep", async (PetService service) =>
+{
+    return await service.SleepAsync();
+});
+
+app.MapPost("/pet/wake", async (PetService service) =>
+{
+    return await service.WakeAsync();
+});
+
 
 app.Run();
 
