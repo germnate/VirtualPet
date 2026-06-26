@@ -43,19 +43,21 @@ export default function App() {
 
   function calcuateAndSetCurrentState(petData) {
     // Determine the current state based on petData
+    console.log('here', petData)
     switch (petData.state) {
-      case "sleeping":
+      case "sleep":
         setCurrentState("sleep");
         break;
-      case "playing":
+      case "play":
         setCurrentState("play");
         break;
-      case "eating":
+      case "eat":
         setCurrentState("eat");
         break;
       default:
         if (["exhausted", "tired", "sad", "miserable", "hungry"].includes(petData.mood)) {
           setCurrentState("sad");
+          console.log('sad');
         } else {
           setCurrentState("idle");
         }
@@ -68,7 +70,7 @@ export default function App() {
     const p = await getPet();
     setPet(p);
     calcuateAndSetCurrentState(p); // update currentState based on pet state
-    setCurrentState(p.state); // idle/happy/sad/etc.
+    // setCurrentState(p.state); // idle/happy/sad/etc.
   }
 
   // --- ACTION HANDLERS -------------------------------------------------------
@@ -148,7 +150,7 @@ export default function App() {
         <VerticalMeter label="Energy" value={pet.energy} color="#4da6ff" />
         <img
           id="fox"
-          src={`sprites/${currentState}-1.png`}
+          src={`/sprites/${currentState}-1.png`}
           alt="fox"
           style={{ width: 200 }}
         />
