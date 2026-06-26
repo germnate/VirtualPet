@@ -5,10 +5,19 @@ body {
     text-align: center;
 }
 
+.pet-window {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
 .container {
     display: grid;
     grid-template-rows: minmax(300px,1fr) auto auto;
     place-items: center;
+    padding: 1%;
 }
 
 #fox {
@@ -21,3 +30,53 @@ body {
     padding: 10px 20px;
     font-size: 18px;
 }
+
+.meters {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Vertical meters */
+.meter-container {
+  text-align: center;
+}
+
+.meter-bar {
+  width: 30px;
+  height: 150px;
+  background: #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.meter-fill {
+  width: 100%;
+  transition: height 0.4s ease;
+}
+
+/* Radial meter */
+.radial-container {
+  text-align: center;
+}
+
+.radial-bg {
+  fill: none;
+  stroke: #ddd;
+  stroke-width: 10;
+}
+
+.radial-progress {
+  fill: none;
+  stroke: #bb66da;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.4s ease;
+}
+
+
+

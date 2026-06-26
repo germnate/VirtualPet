@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef } from "react";
+import VerticalMeter from "./VerticalMeter";
+import RadialMeter from "./RadialMeter";
 import "./App.css";
 
 const API = "http://192.168.86.29:5058";
@@ -119,20 +121,18 @@ export default function App() {
 
   return (
     <div className="container">
-      <img
-        id="fox"
-        src={`sprites/${currentState}-1.png`}
-        alt="fox"
-        style={{ width: 200 }}
-      />
-
-      <div className="stats">
-        <p>Hunger: {pet.hunger}</p>
-        <p>Energy: {pet.energy}</p>
-        <p>Happiness: {pet.happiness}</p>
-        <p>Mood: {pet.mood}</p>
+      <div className="pet-window">
+        <VerticalMeter label="Hunger" value={100 - pet.hunger} color="#0a9c27" />
+        <VerticalMeter label="Energy" value={pet.energy} color="#4da6ff" />
+        <img
+          id="fox"
+          src={`sprites/${currentState}-1.png`}
+          alt="fox"
+          style={{ width: 200 }}
+        />
+        <RadialMeter value={pet.happiness} />
       </div>
-
+      <p>Mood: {pet.mood}</p>
       <div className="buttons">
         <button onClick={handleFeed}>Feed</button>
         <button onClick={handlePlay}>Play</button>
