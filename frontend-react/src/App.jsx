@@ -41,11 +41,33 @@ export default function App() {
 
   // --- REFRESH LOOP ----------------------------------------------------------
 
+  function calcuateAndSetCurrentState(petData) {
+    // Determine the current state based on petData
+    switch (petData.state) {
+      case "sleeping":
+        setCurrentState("sleep");
+        break;
+      case "playing":
+        setCurrentState("play");
+        break;
+      case "eating":
+        setCurrentState("eat");
+        break;
+      default:
+        if (["exhausted", "tired", "sad", "miserable", "hungry"].includes(petData.mood)) {
+          setCurrentState("sad");
+        } else {
+          setCurrentState("idle");
+        }
+    }
+  }
+
   async function refreshPet() {
     if (isAnimating) return; // don't interrupt animations
 
     const p = await getPet();
     setPet(p);
+    calcuateAndSetCurrentState(p); // update currentState based on pet state
     setCurrentState(p.state); // idle/happy/sad/etc.
   }
 
