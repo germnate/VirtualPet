@@ -1,9 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import VerticalMeter from "./VerticalMeter";
 import RadialMeter from "./RadialMeter";
+import { feedPet, getPet, playPet, sleepPet, wakePet } from "./api";
 import "./App.css";
-
-const API = "http://192.168.86.29:5058";
 
 export default function App() {
   const [pet, setPet] = useState(null);
@@ -11,33 +10,6 @@ export default function App() {
   const [isAnimating, setIsAnimating] = useState(false);
 
   const animationTimeout = useRef(null);
-
-  // --- API CALLS -------------------------------------------------------------
-
-  async function getPet() {
-    const res = await fetch(`${API}/pet`);
-    return await res.json();
-  }
-
-  async function feedPet() {
-    const res = await fetch(`${API}/pet/feed`, { method: "POST" });
-    return await res.json();
-  }
-
-  async function playPet() {
-    const res = await fetch(`${API}/pet/play`, { method: "POST" });
-    return await res.json();
-  }
-
-  async function sleepPet() {
-    const res = await fetch(`${API}/pet/sleep`, { method: "POST" });
-    return await res.json();
-  }
-
-  async function wakePet() {
-    const res = await fetch(`${API}/pet/wake`, { method: "POST" });
-    return await res.json();
-  }
 
   // --- REFRESH LOOP ----------------------------------------------------------
 
