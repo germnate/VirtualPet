@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 public class PetService
 {
     private const int MaxFeedingsPerWindow = 3;
-    private static readonly TimeSpan FeedingWindowDuration = TimeSpan.FromHours(12);
+    private const int HungerReductionPerFeeding = 15;
 
     private readonly PetDbContext _db;
 
@@ -32,7 +32,7 @@ public class PetService
         var pet = await GetPetEntityAsync();
         var now = DateTime.UtcNow;
 
-        if (ResetFeedingWindowIfExpired(pet, now))
+        if (ResetFeedingWindowIfNeeded(pet, now))
         {
             await _db.SaveChangesAsync();
         }
@@ -46,22 +46,22 @@ public class PetService
         var pet = await GetPetEntityAsync();
         var now = DateTime.UtcNow;
 
-        ResetFeedingWindowIfExpired(pet, now);
+        ResetFeedingWindowIfNeeded(pet, now);
 
         if (pet.FeedingsUsedInWindow >= MaxFeedingsPerWindow)
         {
             return new FeedResult
             {
                 Succeeded = false,
-                ErrorMessage = "Feed limit reached. Try again when the 12-hour window resets.",
+                ErrorMessage = "Feed limit reached. Try again after the next feeding reset.",
                 Pet = ToResponse(pet, now)
             };
         }
 
-        pet.FeedingWindowStartUtc ??= now;
+        pet.FeedingWindowStartUtc = GetFeedingWindow(now).WindowStartUtc;
         pet.FeedingsUsedInWindow++;
 
-        pet.Hunger = Math.Max(0, pet.Hunger - 20);
+        pet.Hunger = Math.Max(0, pet.Hunger - HungerReductionPerFeeding);
         pet.State = "eat";
         pet.LastUpdated = now;
 
@@ -115,8 +115,10 @@ public class PetService
         return ToResponse(pet, now);
     }
 
-    private static bool ResetFeedingWindowIfExpired(Pet pet, DateTime now)
+    private static bool ResetFeedingWindowIfNeeded(Pet pet, DateTime now)
     {
+        var window = GetFeedingWindow(now);
+
         if (!pet.FeedingWindowStartUtc.HasValue)
         {
             if (pet.FeedingsUsedInWindow == 0)
@@ -125,24 +127,26 @@ public class PetService
             }
 
             pet.FeedingsUsedInWindow = 0;
+            pet.FeedingWindowStartUtc = window.WindowStartUtc;
             return true;
         }
 
-        if (now - pet.FeedingWindowStartUtc.Value < FeedingWindowDuration)
+        if (pet.FeedingWindowStartUtc.Value == window.WindowStartUtc)
         {
             return false;
         }
 
-        pet.FeedingWindowStartUtc = null;
+        pet.FeedingWindowStartUtc = window.WindowStartUtc;
         pet.FeedingsUsedInWindow = 0;
         return true;
     }
 
     private static PetResponse ToResponse(Pet pet, DateTime now)
     {
-        var windowIsActive = pet.FeedingWindowStartUtc.HasValue
-            && now - pet.FeedingWindowStartUtc.Value < FeedingWindowDuration;
-        var usedFeedings = windowIsActive ? pet.FeedingsUsedInWindow : 0;
+        var window = GetFeedingWindow(now);
+        var usedFeedings = pet.FeedingWindowStartUtc == window.WindowStartUtc
+            ? pet.FeedingsUsedInWindow
+            : 0;
 
         return new PetResponse
         {
@@ -156,9 +160,46 @@ public class PetService
             Mood = pet.Mood,
             RemainingFeedings = Math.Max(0, MaxFeedingsPerWindow - usedFeedings),
             FeedingsUsedInWindow = usedFeedings,
-            FeedingWindowResetsAtUtc = windowIsActive
-                ? pet.FeedingWindowStartUtc!.Value.Add(FeedingWindowDuration)
-                : null
+            FeedingWindowResetsAtUtc = window.NextResetUtc
         };
     }
+
+    private static FeedingWindow GetFeedingWindow(DateTime nowUtc)
+    {
+        var localNow = TimeZoneInfo.ConvertTimeFromUtc(nowUtc, TimeZoneInfo.Local);
+        var currentDate = localNow.Date;
+        var eightAm = currentDate.AddHours(8);
+        var noon = currentDate.AddHours(12);
+        var sixPm = currentDate.AddHours(18);
+
+        DateTime windowStartLocal;
+        DateTime nextResetLocal;
+
+        if (localNow < eightAm)
+        {
+            windowStartLocal = currentDate.AddDays(-1).AddHours(18);
+            nextResetLocal = eightAm;
+        }
+        else if (localNow < noon)
+        {
+            windowStartLocal = eightAm;
+            nextResetLocal = noon;
+        }
+        else if (localNow < sixPm)
+        {
+            windowStartLocal = noon;
+            nextResetLocal = sixPm;
+        }
+        else
+        {
+            windowStartLocal = sixPm;
+            nextResetLocal = currentDate.AddDays(1).AddHours(8);
+        }
+
+        return new FeedingWindow(
+            TimeZoneInfo.ConvertTimeToUtc(windowStartLocal, TimeZoneInfo.Local),
+            TimeZoneInfo.ConvertTimeToUtc(nextResetLocal, TimeZoneInfo.Local));
+    }
+
+    private sealed record FeedingWindow(DateTime WindowStartUtc, DateTime NextResetUtc);
 }
