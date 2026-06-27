@@ -17,6 +17,8 @@ public class Pet
 
     public int FeedingsUsedInWindow { get; set; }
 
+    public bool HealthPenaltyAppliedInWindow { get; set; }
+
     public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
     public string Mood => CalculateMood();

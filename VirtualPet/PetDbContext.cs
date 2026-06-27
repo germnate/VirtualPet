@@ -23,6 +23,7 @@ public class PetDbContext : DbContext
                 Happiness = 65,
                 Health = Pet.MaxHealth,
                 FeedingsUsedInWindow = 0,
+                HealthPenaltyAppliedInWindow = false,
                 FeedingWindowStartUtc = null,
                 State = "idle",
                 LastUpdated = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc)

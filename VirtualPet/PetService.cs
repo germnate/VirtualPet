@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 public class PetService
 {
     private const int MaxFeedingsPerWindow = 3;
-    private const int HungerReductionPerFeeding = 15;
+    private const int HungerReductionPerFeeding = 20;
 
     private readonly PetDbContext _db;
 
@@ -120,7 +120,7 @@ public class PetService
         return ToResponse(pet, now);
     }
 
-    private static bool ResetFeedingWindowIfNeeded(Pet pet, DateTime now)
+    internal static bool ResetFeedingWindowIfNeeded(Pet pet, DateTime now)
     {
         var window = GetFeedingWindow(now);
 
@@ -128,6 +128,7 @@ public class PetService
         {
             pet.FeedingWindowStartUtc = window.WindowStartUtc;
             pet.FeedingsUsedInWindow = 0;
+            pet.HealthPenaltyAppliedInWindow = false;
             return true;
         }
 
@@ -136,20 +137,23 @@ public class PetService
             return false;
         }
 
-        ApplyWindowHealthPenalty(pet);
+        TryApplyWindowHealthPenalty(pet);
         pet.FeedingWindowStartUtc = window.WindowStartUtc;
         pet.FeedingsUsedInWindow = 0;
+        pet.HealthPenaltyAppliedInWindow = false;
         return true;
     }
 
-    private static void ApplyWindowHealthPenalty(Pet pet)
+    internal static bool TryApplyWindowHealthPenalty(Pet pet)
     {
-        if (pet.Hunger < 100 || pet.Health == 0)
+        if (pet.Hunger < 100 || pet.Health == 0 || pet.HealthPenaltyAppliedInWindow)
         {
-            return;
+            return false;
         }
 
         pet.Health--;
+        pet.HealthPenaltyAppliedInWindow = true;
+        return true;
     }
 
     private static PetResponse ToResponse(Pet pet, DateTime now)
