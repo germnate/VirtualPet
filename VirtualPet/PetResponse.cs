@@ -10,6 +10,8 @@ public class PetResponse
 
     public int Happiness { get; init; }
 
+    public int Health { get; init; }
+
     public string State { get; init; } = string.Empty;
 
     public DateTime LastUpdated { get; init; }

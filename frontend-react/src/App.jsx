@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import HealthMeter from "./HealthMeter";
 import VerticalMeter from "./VerticalMeter";
 import RadialMeter from "./RadialMeter";
 import { feedPet, getPet, playPet, sleepPet, wakePet } from "./api";
@@ -128,6 +129,7 @@ export default function App() {
 
   return (
     <div className="container">
+      <HealthMeter health={pet.health} maxHealth={6} />
       <div className="pet-window">
         <VerticalMeter label="Hunger" value={100 - pet.hunger} color="#0a9c27" />
         <VerticalMeter label="Energy" value={pet.energy} color="#4da6ff" />

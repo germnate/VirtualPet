@@ -21,6 +21,7 @@ public class PetDbContext : DbContext
                 Hunger = 40,
                 Energy = 80,
                 Happiness = 65,
+                Health = Pet.MaxHealth,
                 FeedingsUsedInWindow = 0,
                 FeedingWindowStartUtc = null,
                 State = "idle",

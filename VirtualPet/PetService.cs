@@ -62,6 +62,11 @@ public class PetService
         pet.FeedingsUsedInWindow++;
 
         pet.Hunger = Math.Max(0, pet.Hunger - HungerReductionPerFeeding);
+        if (pet.Hunger == 0)
+        {
+            pet.Health = Pet.MaxHealth;
+        }
+
         pet.State = "eat";
         pet.LastUpdated = now;
 
@@ -121,13 +126,8 @@ public class PetService
 
         if (!pet.FeedingWindowStartUtc.HasValue)
         {
-            if (pet.FeedingsUsedInWindow == 0)
-            {
-                return false;
-            }
-
-            pet.FeedingsUsedInWindow = 0;
             pet.FeedingWindowStartUtc = window.WindowStartUtc;
+            pet.FeedingsUsedInWindow = 0;
             return true;
         }
 
@@ -136,9 +136,20 @@ public class PetService
             return false;
         }
 
+        ApplyWindowHealthPenalty(pet);
         pet.FeedingWindowStartUtc = window.WindowStartUtc;
         pet.FeedingsUsedInWindow = 0;
         return true;
+    }
+
+    private static void ApplyWindowHealthPenalty(Pet pet)
+    {
+        if (pet.Hunger < 100 || pet.Health == 0)
+        {
+            return;
+        }
+
+        pet.Health--;
     }
 
     private static PetResponse ToResponse(Pet pet, DateTime now)
@@ -155,6 +166,7 @@ public class PetService
             Hunger = pet.Hunger,
             Energy = pet.Energy,
             Happiness = pet.Happiness,
+            Health = pet.Health,
             State = pet.State,
             LastUpdated = pet.LastUpdated,
             Mood = pet.Mood,

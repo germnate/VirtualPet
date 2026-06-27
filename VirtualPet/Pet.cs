@@ -1,5 +1,7 @@
 public class Pet
 {
+    public const int MaxHealth = 6;
+
     public int Id { get; set; }
 
     public string Name { get; set; } = "Foxy";
@@ -7,6 +9,7 @@ public class Pet
     public int Hunger { get; set; } = 40;
     public int Energy { get; set; } = 80;
     public int Happiness { get; set; } = 65;
+    public int Health { get; set; } = MaxHealth;
 
     public string State { get; set; } = "idle";
 

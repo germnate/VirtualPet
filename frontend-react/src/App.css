@@ -5,6 +5,30 @@ body {
     text-align: center;
 }
 
+.health-meter {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  gap: 0.35rem;
+}
+
+.heart-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.heart-icon path {
+  fill: transparent;
+  stroke: #ffc2cf;
+  stroke-width: 1.6;
+}
+
+.heart-icon.is-filled path {
+  fill: #f24b6a;
+  stroke: #f24b6a;
+}
+
 .pet-window {
   display: flex;
   flex-wrap: wrap;
@@ -14,10 +38,12 @@ body {
 }
 
 .container {
+  position: relative;
     display: grid;
     grid-template-rows: minmax(300px,1fr) auto auto;
     place-items: center;
     padding: 1%;
+  min-height: 100vh;
 }
 
 #fox {
@@ -99,6 +125,18 @@ body {
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
   transition: stroke-dashoffset 0.4s ease;
+}
+
+@media (max-width: 640px) {
+  .container {
+    grid-template-rows: auto minmax(300px, 1fr) auto auto;
+    padding-top: 4.5rem;
+  }
+
+  .health-meter {
+    top: 0.75rem;
+    left: 0.75rem;
+  }
 }
 
 
