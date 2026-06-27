@@ -1,4 +1,4 @@
-const API = "http://192.168.86.29:5058";
+const API = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 
 async function request(path, options) {
   const response = await fetch(`${API}${path}`, options);

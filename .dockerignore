@@ -1,0 +1,9 @@
+.git
+frontend-react/node_modules
+frontend-react/dist
+VirtualPet/bin
+VirtualPet/obj
+VirtualPet/wwwroot
+VirtualPet/*.db
+VirtualPet/*.db-shm
+VirtualPet/*.db-wal

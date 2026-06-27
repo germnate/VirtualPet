@@ -11,6 +11,9 @@ Migrations/*Snapshot.cs
 *.db-shm
 *.db-wal
 
+# Frontend build output
+wwwroot/
+
 # User-specific files
 *.user
 *.suo

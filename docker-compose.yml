@@ -1,0 +1,17 @@
+services:
+  virtualpet:
+    build:
+      context: .
+      dockerfile: VirtualPet/Dockerfile
+    ports:
+      - "5058:8080"
+    environment:
+      ConnectionStrings__PetDb: Data Source=/app/data/pet.db
+      UseHttpsRedirection: "false"
+      TZ: America/New_York
+    volumes:
+      - petdata:/app/data
+    restart: unless-stopped
+
+volumes:
+  petdata:

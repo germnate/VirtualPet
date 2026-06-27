@@ -1,16 +1,36 @@
-# React + Vite
+# Frontend Notes
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This React app is built with Vite, but production builds are emitted into `../VirtualPet/wwwroot` so the ASP.NET backend can serve the static files directly.
 
-Currently, two official plugins are available:
+## Local Frontend Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Run the backend first in another terminal:
 
-## React Compiler
+```powershell
+Set-Location ..\VirtualPet
+dotnet run --launch-profile http
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Then run the frontend dev server from this folder:
 
-## Expanding the ESLint configuration
+```powershell
+npm.cmd install
+$env:VITE_API_URL="http://localhost:5058"
+npm.cmd run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Open:
+
+```text
+http://localhost:5173
+```
+
+## Production Build
+
+Create a production build that the backend serves from `wwwroot`:
+
+```powershell
+npm.cmd run build
+```
+
+For Docker deployment, LAN access, and the full local workflow, see the repository README in the workspace root.

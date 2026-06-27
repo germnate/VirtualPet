@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    outDir: '../VirtualPet/wwwroot',
+    emptyOutDir: true,
+  },
   server: {
     host: true,     // exposes to LAN (0.0.0.0)
     port: 5173      // optional, but keeps it consistent

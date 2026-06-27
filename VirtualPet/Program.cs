@@ -1,13 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("PetDb") ?? "Data Source=pet.db";
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<PetDbContext>(options =>
-    options.UseSqlite("Data Source=pet.db"));
+    options.UseSqlite(connectionString));
 
 builder.Services.AddScoped<PetService>();
 builder.Services.AddHostedService<PetUpdateService>();
@@ -25,6 +26,12 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<PetDbContext>();
+    db.Database.Migrate();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -33,7 +40,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 
-app.UseHttpsRedirection();
+if (builder.Configuration.GetValue("UseHttpsRedirection", true))
+{
+    app.UseHttpsRedirection();
+}
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.MapGet("/pet", async (PetService service) =>
 {
@@ -69,6 +82,7 @@ app.MapPost("/pet/wake", async (PetService service) =>
     return Results.Ok(await service.WakeAsync());
 });
 
+app.MapFallbackToFile("index.html");
 
 app.Run();
 
