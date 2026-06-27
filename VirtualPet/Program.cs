@@ -37,27 +37,36 @@ app.UseHttpsRedirection();
 
 app.MapGet("/pet", async (PetService service) =>
 {
-    return await service.GetAsync();
+    return Results.Ok(await service.GetAsync());
 });
 
 app.MapPost("/pet/feed", async (PetService service) =>
 {
-    return await service.FeedAsync();
+    var result = await service.FeedAsync();
+
+    if (result.Succeeded)
+    {
+        return Results.Ok(result.Pet);
+    }
+
+    return Results.Json(
+        new { message = result.ErrorMessage, pet = result.Pet },
+        statusCode: StatusCodes.Status429TooManyRequests);
 });
 
 app.MapPost("/pet/play", async (PetService service) =>
 {
-    return await service.PlayAsync();
+    return Results.Ok(await service.PlayAsync());
 });
 
 app.MapPost("/pet/sleep", async (PetService service) =>
 {
-    return await service.SleepAsync();
+    return Results.Ok(await service.SleepAsync());
 });
 
 app.MapPost("/pet/wake", async (PetService service) =>
 {
-    return await service.WakeAsync();
+    return Results.Ok(await service.WakeAsync());
 });
 
 

@@ -2,7 +2,16 @@ const API = "http://192.168.86.29:5058";
 
 async function request(path, options) {
   const response = await fetch(`${API}${path}`, options);
-  return await response.json();
+  const data = await response.json();
+
+  if (!response.ok) {
+    const error = new Error(data?.message ?? "Request failed.");
+    error.status = response.status;
+    error.pet = data?.pet ?? null;
+    throw error;
+  }
+
+  return data;
 }
 
 export function getPet() {

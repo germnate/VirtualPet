@@ -10,6 +10,10 @@ public class Pet
 
     public string State { get; set; } = "idle";
 
+    public DateTime? FeedingWindowStartUtc { get; set; }
+
+    public int FeedingsUsedInWindow { get; set; }
+
     public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
     public string Mood => CalculateMood();

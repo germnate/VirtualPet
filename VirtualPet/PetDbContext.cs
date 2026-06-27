@@ -21,6 +21,8 @@ public class PetDbContext : DbContext
                 Hunger = 40,
                 Energy = 80,
                 Happiness = 65,
+                FeedingsUsedInWindow = 0,
+                FeedingWindowStartUtc = null,
                 State = "idle",
                 LastUpdated = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc)
             }

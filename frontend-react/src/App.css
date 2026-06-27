@@ -25,10 +25,33 @@ body {
     image-rendering: pixelated;
 }
 
+.pet-portrait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.feeding-count {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.action-error {
+  min-height: 1.5rem;
+  margin: 0.5rem 0;
+  color: #ff9c9c;
+}
+
 .buttons button {
     margin: 10px;
     padding: 10px 20px;
     font-size: 18px;
+}
+
+.buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .meters {
