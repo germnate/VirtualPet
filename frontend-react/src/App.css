@@ -40,10 +40,14 @@ body {
 .container {
   position: relative;
     display: grid;
-    grid-template-rows: minmax(300px,1fr) auto auto;
+    grid-template-rows: minmax(300px,max-content) max-content auto;
     place-items: center;
     padding: 1%;
   min-height: 100vh;
+}
+
+.container > .buttons {
+  align-self: start;
 }
 
 #fox {
@@ -129,7 +133,6 @@ body {
 
 @media (max-width: 640px) {
   .container {
-    grid-template-rows: auto minmax(300px, 1fr) auto auto;
     padding-top: 4.5rem;
   }
 
