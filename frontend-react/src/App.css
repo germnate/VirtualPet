@@ -39,11 +39,13 @@ body {
 
 .container {
   position: relative;
-    display: grid;
-    grid-template-rows: minmax(300px,max-content) max-content auto;
-    place-items: center;
-    padding: 1%;
-  min-height: 100vh;
+  display: grid;
+  grid-template-rows: minmax(300px, max-content) max-content auto;
+  place-items: center;
+  padding: 1%;
+  min-height: 100%;
+  flex: 1;
+  box-sizing: border-box;
 }
 
 .container > .buttons {
