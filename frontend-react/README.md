@@ -15,7 +15,7 @@ Then run the frontend dev server from this folder:
 
 ```powershell
 npm.cmd install
-$env:VITE_API_URL="http://localhost:5058"
+$env:VITE_API_URL="http://localhost:4058"
 npm.cmd run dev
 ```
 

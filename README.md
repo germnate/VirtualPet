@@ -21,7 +21,7 @@ dotnet run --launch-profile http
 The backend listens on:
 
 ```text
-http://localhost:5058
+http://localhost:4058
 ```
 
 ### Frontend Dev Server
@@ -31,7 +31,7 @@ In a second terminal, start the Vite dev server and point it at the backend:
 ```powershell
 Set-Location .\frontend-react
 npm.cmd install
-$env:VITE_API_URL="http://localhost:5058"
+$env:VITE_API_URL="http://localhost:4058"
 npm.cmd run dev
 ```
 
@@ -62,7 +62,7 @@ dotnet run --launch-profile http
 Then open:
 
 ```text
-http://localhost:5058
+http://localhost:4058
 ```
 
 This builds the frontend into `VirtualPet/wwwroot`, and the backend serves those files directly.
