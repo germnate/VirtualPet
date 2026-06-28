@@ -9,6 +9,11 @@ export default defineConfig({
   },
   server: {
     host: true,     // exposes to LAN (0.0.0.0)
-    port: 5173      // optional, but keeps it consistent
+    port: 5173,     // optional, but keeps it consistent
+    proxy: {
+      '/pet': {
+        target: 'http://localhost:4058',
+      },
+    },
   }
 })

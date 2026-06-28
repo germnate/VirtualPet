@@ -26,12 +26,11 @@ http://localhost:4058
 
 ### Frontend Dev Server
 
-In a second terminal, start the Vite dev server and point it at the backend:
+In a second terminal, start the Vite dev server:
 
 ```powershell
 Set-Location .\frontend-react
 npm.cmd install
-$env:VITE_API_URL="http://localhost:4058"
 npm.cmd run dev
 ```
 
@@ -45,6 +44,7 @@ http://localhost:5173
 
 - `npm.cmd` is the Windows npm launcher. Use it if PowerShell blocks plain `npm`.
 - Keep both terminals running while developing.
+- Vite proxies `/pet` requests to `http://localhost:4058` during local development.
 - Use this flow for fast frontend iteration with Vite hot reload.
 
 ## Production-Style Local Run Without Docker
