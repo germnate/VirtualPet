@@ -1,21 +1,60 @@
 import { useEffect, useRef, useState } from "react";
-import { sendStoryCommand } from "./api";
-import "./MosslightHollow.css";
-
-const INITIAL_MESSAGES = [
-  {
-    id: 1,
-    role: "game",
-    text: "Welcome to Mosslight Hollow. Type a thought, a question, or a simple action to begin.",
-  },
-];
+import { getStoryOpening, sendStoryCommand } from "./api";
+import "./MosslightHollowPage.css";
 
 export default function MosslightHollowPage() {
-  const [messages, setMessages] = useState(INITIAL_MESSAGES);
+  const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [isLoadingStory, setIsLoadingStory] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const messagesRef = useRef(null);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function loadOpening() {
+      try {
+        const response = await getStoryOpening();
+
+        if (!isActive) {
+          return;
+        }
+
+        setMessages([
+          {
+            id: Date.now(),
+            role: "game",
+            text: response.reply,
+          },
+        ]);
+        setErrorMessage("");
+      } catch (error) {
+        if (!isActive) {
+          return;
+        }
+
+        setMessages([
+          {
+            id: Date.now(),
+            role: "game",
+            text: "Mosslight Hollow is hidden in fog right now. Try again in a moment.",
+          },
+        ]);
+        setErrorMessage(error.message ?? "Unable to open the story right now.");
+      } finally {
+        if (isActive) {
+          setIsLoadingStory(false);
+        }
+      }
+    }
+
+    loadOpening();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   useEffect(() => {
     const messagesElement = messagesRef.current;
@@ -34,7 +73,7 @@ export default function MosslightHollowPage() {
     event.preventDefault();
 
     const trimmedDraft = draft.trim();
-    if (!trimmedDraft || isSending) {
+    if (!trimmedDraft || isSending || isLoadingStory) {
       return;
     }
 
@@ -107,11 +146,11 @@ export default function MosslightHollowPage() {
               type="text"
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
-              placeholder="Try: look around, open the gate, or ask a question"
+              placeholder={isLoadingStory ? "Gathering the story..." : "Try: look, go east, answer 7, take lantern, or inventory"}
               autoComplete="off"
-              disabled={isSending}
+              disabled={isSending || isLoadingStory}
             />
-            <button type="submit" disabled={isSending || !draft.trim()}>
+            <button type="submit" disabled={isSending || isLoadingStory || !draft.trim()}>
               {isSending ? "Sending..." : "Send"}
             </button>
           </div>

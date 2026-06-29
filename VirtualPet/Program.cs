@@ -11,6 +11,7 @@ builder.Services.AddDbContext<PetDbContext>(options =>
     options.UseSqlite(connectionString));
 
 builder.Services.AddScoped<PetService>();
+builder.Services.AddSingleton<MosslightHollowService>();
 builder.Services.AddHostedService<PetUpdateService>();
 builder.Services.AddCors(options =>
 {
@@ -82,7 +83,12 @@ app.MapPost("/pet/wake", async (PetService service) =>
     return Results.Ok(await service.WakeAsync());
 });
 
-app.MapPost("/pet/story", (StoryRequest request) =>
+app.MapGet("/pet/story", (MosslightHollowService service) =>
+{
+    return Results.Ok(service.GetOpening());
+});
+
+app.MapPost("/pet/story", (StoryRequest request, MosslightHollowService service) =>
 {
     var trimmedInput = request.Input?.Trim();
 
@@ -91,8 +97,7 @@ app.MapPost("/pet/story", (StoryRequest request) =>
         return Results.BadRequest(new { message = "Tell the story what you want to do first." });
     }
 
-    var reply = $"The lantern light flickers and answers: \"I heard '{trimmedInput}'. Soon this will shape the story.\"";
-    return Results.Ok(new StoryResponse(reply));
+    return Results.Ok(service.ProcessCommand(trimmedInput));
 });
 
 app.MapFallbackToFile("index.html");
@@ -103,6 +108,3 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
-
-record StoryRequest(string Input);
-record StoryResponse(string Reply);

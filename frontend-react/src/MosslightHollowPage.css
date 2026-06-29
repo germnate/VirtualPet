@@ -85,6 +85,10 @@
   text-align: left;
 }
 
+.story-bubble p:last-child {
+  white-space: pre-wrap;
+}
+
 .story-bubble--game {
   align-self: flex-start;
   background: rgba(116, 92, 52, 0.32);

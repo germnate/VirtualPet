@@ -34,6 +34,10 @@ export function wakePet() {
   return request("/pet/wake", { method: "POST" });
 }
 
+export function getStoryOpening() {
+  return request("/pet/story");
+}
+
 export function sendStoryCommand(input) {
   return request("/pet/story", {
     method: "POST",
