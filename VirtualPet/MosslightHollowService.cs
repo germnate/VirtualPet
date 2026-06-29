@@ -65,10 +65,14 @@ public sealed class MosslightHollowService
     {
         lock (_syncRoot)
         {
+            var sceneResponse = BuildCurrentSceneResponse();
+
             return new StoryResponse(
                 "Welcome to Mosslight Hollow. Small choices matter here, so look closely and trust your curiosity.\n\n"
-                + DescribeCurrentScene()
-                + "\n\nType 'help' if you want a quick list of useful commands.");
+                + sceneResponse.Reply
+                + "\n\nType 'help' if you want a quick list of useful commands.",
+                sceneResponse.SceneName,
+                sceneResponse.SceneId);
         }
     }
 
@@ -90,7 +94,7 @@ public sealed class MosslightHollowService
 
             if (normalized is "look" or "look around")
             {
-                return new StoryResponse(DescribeCurrentScene());
+                return BuildCurrentSceneResponse();
             }
 
             if (normalized is "inventory" or "bag" or "items")
@@ -100,7 +104,7 @@ public sealed class MosslightHollowService
 
             if (TryGetDirection(normalized, out var direction))
             {
-                return new StoryResponse(Move(direction));
+                return Move(direction);
             }
 
             if (normalized.StartsWith("take ", StringComparison.Ordinal))
@@ -138,7 +142,7 @@ public sealed class MosslightHollowService
         }
     }
 
-    private string DescribeCurrentScene()
+    private StoryResponse BuildCurrentSceneResponse()
     {
         var scene = _scenes[_state.CurrentSceneId];
         var details = scene.Description;
@@ -146,7 +150,7 @@ public sealed class MosslightHollowService
         var visibleItems = GetVisibleItems(scene.Id).ToList();
         var exits = GetVisibleExits(scene.Id).ToList();
 
-        var reply = $"{scene.Name}\n{details}";
+        var reply = details;
 
         if (!string.IsNullOrWhiteSpace(sceneHint))
         {
@@ -159,7 +163,7 @@ public sealed class MosslightHollowService
         }
 
         reply += $"\n\nExits: {string.Join(", ", exits)}.";
-        return reply;
+        return new StoryResponse(reply, scene.Name, scene.Id);
     }
 
     private string GetSceneHint(string sceneId)
@@ -209,22 +213,23 @@ public sealed class MosslightHollowService
         return "You are carrying:\n- " + string.Join("\n- ", _state.Inventory.OrderBy(item => item));
     }
 
-    private string Move(string direction)
+    private StoryResponse Move(string direction)
     {
         var scene = _scenes[_state.CurrentSceneId];
 
         if (!scene.Exits.TryGetValue(direction, out var destination))
         {
-            return $"There is no path {direction} from here.";
+            return new StoryResponse($"There is no path {direction} from here.");
         }
 
         if (_state.CurrentSceneId == BrambleGate && direction == "north" && !_state.GateUnlocked)
         {
-            return "The gate does not budge. You need a key before you can go north.";
+            return new StoryResponse("The gate does not budge. You need a key before you can go north.");
         }
 
         _state.CurrentSceneId = destination;
-        return $"You head {direction}.\n\n{DescribeCurrentScene()}";
+        var sceneResponse = BuildCurrentSceneResponse();
+        return new StoryResponse($"You head {direction}.\n\n{sceneResponse.Reply}", sceneResponse.SceneName, sceneResponse.SceneId);
     }
 
     private string TakeItem(string itemName)

@@ -25,6 +25,8 @@ export default function MosslightHollowPage() {
           {
             id: Date.now(),
             role: "game",
+            sceneName: response.sceneName ?? null,
+            sceneId: response.sceneId ?? null,
             text: response.reply,
           },
         ]);
@@ -38,6 +40,8 @@ export default function MosslightHollowPage() {
           {
             id: Date.now(),
             role: "game",
+            sceneName: null,
+            sceneId: null,
             text: "Mosslight Hollow is hidden in fog right now. Try again in a moment.",
           },
         ]);
@@ -80,6 +84,8 @@ export default function MosslightHollowPage() {
     const playerMessage = {
       id: Date.now(),
       role: "player",
+      sceneName: null,
+      sceneId: null,
       text: trimmedDraft,
     };
 
@@ -96,6 +102,8 @@ export default function MosslightHollowPage() {
         {
           id: Date.now() + 1,
           role: "game",
+          sceneName: response.sceneName ?? null,
+          sceneId: response.sceneId ?? null,
           text: response.reply,
         },
       ]);
@@ -127,10 +135,17 @@ export default function MosslightHollowPage() {
               key={message.id}
               className={`story-bubble story-bubble--${message.role}`}
             >
-              <p className="story-bubble__label">
-                {message.role === "player" ? "You" : "Story"}
-              </p>
-              <p>{message.text}</p>
+              <div className="story-bubble__meta">
+                <p className="story-bubble__label">
+                  {message.role === "player" ? "You" : "Story"}
+                </p>
+                {message.sceneName ? (
+                  <span className="story-bubble__scene-pill">
+                    {message.sceneName}
+                  </span>
+                ) : null}
+              </div>
+              <p className="story-bubble__text">{message.text}</p>
             </article>
           ))}
         </div>
