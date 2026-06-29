@@ -129,6 +129,9 @@ export default function App() {
 
   return (
     <div className="container">
+      <a className="story-link" href="/game">
+        Step Into Mosslight Hollow
+      </a>
       <HealthMeter health={pet.health} maxHealth={6} />
       <div className="pet-window">
         <VerticalMeter label="Hunger" value={100 - pet.hunger} color="#0a9c27" />

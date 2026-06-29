@@ -82,6 +82,19 @@ app.MapPost("/pet/wake", async (PetService service) =>
     return Results.Ok(await service.WakeAsync());
 });
 
+app.MapPost("/pet/story", (StoryRequest request) =>
+{
+    var trimmedInput = request.Input?.Trim();
+
+    if (string.IsNullOrWhiteSpace(trimmedInput))
+    {
+        return Results.BadRequest(new { message = "Tell the story what you want to do first." });
+    }
+
+    var reply = $"The lantern light flickers and answers: \"I heard '{trimmedInput}'. Soon this will shape the story.\"";
+    return Results.Ok(new StoryResponse(reply));
+});
+
 app.MapFallbackToFile("index.html");
 
 app.Run();
@@ -90,3 +103,6 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+record StoryRequest(string Input);
+record StoryResponse(string Reply);

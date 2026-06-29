@@ -5,6 +5,21 @@ body {
     text-align: center;
 }
 
+.story-link {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  color: white;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .health-meter {
   position: absolute;
   top: 1rem;
@@ -136,6 +151,13 @@ body {
 @media (max-width: 640px) {
   .container {
     padding-top: 4.5rem;
+  }
+
+  .story-link {
+    right: 0.75rem;
+    top: 0.75rem;
+    padding-inline: 0.8rem;
+    font-size: 0.9rem;
   }
 
   .health-meter {

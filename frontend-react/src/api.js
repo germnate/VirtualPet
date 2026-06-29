@@ -33,3 +33,13 @@ export function sleepPet() {
 export function wakePet() {
   return request("/pet/wake", { method: "POST" });
 }
+
+export function sendStoryCommand(input) {
+  return request("/pet/story", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ input }),
+  });
+}
