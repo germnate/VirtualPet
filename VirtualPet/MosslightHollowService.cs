@@ -36,7 +36,7 @@ public sealed class MosslightHollowService
             [WhisperingBrook] = new(
                 WhisperingBrook,
                 "Whispering Brook",
-                "A narrow brook chatters over smooth stones. A reed sign points toward a tiny stone bridge puzzle beside the water.",
+                "A narrow brook chatters over smooth stones. A reed sign points toward a tiny stone bridge beside the water.",
                 new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["west"] = DenClearing,
@@ -125,11 +125,11 @@ public sealed class MosslightHollowService
                 return new StoryResponse(UseItem(normalized[4..]));
             }
 
-            if (normalized.StartsWith("answer ", StringComparison.Ordinal)
-                || normalized.StartsWith("solve ", StringComparison.Ordinal))
+            if (normalized.StartsWith("speak ", StringComparison.Ordinal)
+                || normalized.StartsWith("say ", StringComparison.Ordinal))
             {
-                var answer = normalized.Split(' ', 2, StringSplitOptions.TrimEntries)[1];
-                return new StoryResponse(AnswerPuzzle(answer));
+                var speech = normalized.Split(' ', 2, StringSplitOptions.TrimEntries)[1];
+                return new StoryResponse(Say(speech));
             }
 
             if (normalized is "open gate" or "unlock gate")
@@ -138,7 +138,7 @@ public sealed class MosslightHollowService
             }
 
             return new StoryResponse(
-                "The hollow does not understand that yet. Try commands like 'look', 'go east', 'take lantern', 'answer 7', or 'inventory'.");
+                "The hollow does not understand that yet. Try commands like 'look', 'go east', 'take lantern', 'speak {something}', or 'inventory'.");
         }
     }
 
@@ -171,7 +171,7 @@ public sealed class MosslightHollowService
         return sceneId switch
         {
             LanternNook when !_state.Inventory.Contains("lantern") => "The lantern looks light enough to carry.",
-            WhisperingBrook when !_state.BrookPuzzleSolved => "Three stones show the numbers 3, 4, and ?. The reed sign asks, 'What is the sum of the first two stones?'",
+            WhisperingBrook when !_state.BrookPuzzleSolved => "Three stones show have numbers written on them but it's too dark to make them out.",
             WhisperingBrook when _state.BrookPuzzleSolved && !_state.Inventory.Contains("brass key") => "The safe path glows. A small brass key gleams in a shell beside the water.",
             BrambleGate when !_state.GateUnlocked => "The gate is locked. If you find the right key, try 'use brass key on gate'.",
             BrambleGate when _state.GateUnlocked => "The gate stands open, and the path north is clear.",
@@ -242,7 +242,7 @@ public sealed class MosslightHollowService
             }
 
             _state.Inventory.Add("lantern");
-            return "You lift the lantern from the branch. Its warm light makes the shadows seem less bossy.";
+            return "You lift the lantern from the branch. Its warm light makes you feel more confident.";
         }
 
         if (MatchesItem(itemName, "brass key") || MatchesItem(itemName, "key"))
@@ -277,7 +277,7 @@ public sealed class MosslightHollowService
 
             return _state.BrookPuzzleSolved
                 ? "The stepping stones shimmer in a calm line across the brook. The riddle has already done its work."
-                : "The sign reads: 'Add the first two stones to wake the third.' The numbered stones show 3 and 4.";
+                : "The sign reads: 'Speak the numbers in order to reveal their secret'";
         }
 
         if (target.Contains("gate", StringComparison.Ordinal) || target.Contains("keyhole", StringComparison.Ordinal) || target.Contains("bramble", StringComparison.Ordinal))
@@ -311,7 +311,7 @@ public sealed class MosslightHollowService
 
             if (_state.CurrentSceneId == WhisperingBrook && !_state.BrookPuzzleSolved)
             {
-                return "By lantern light, the numbers on the stones are easy to read: 3 and 4. Their sum is 7.";
+                return "By lantern light, the numbers on the stones are easy to read: 3, 1, and 4.";
             }
 
             return "You raise the lantern. The path ahead looks friendlier in its amber glow.";
@@ -346,11 +346,11 @@ public sealed class MosslightHollowService
         return "The brass key turns with a cheerful click. The bramble gate swings open, and the path north is finally clear.";
     }
 
-    private string AnswerPuzzle(string answer)
+    private string Say(string speech)
     {
         if (_state.CurrentSceneId != WhisperingBrook)
         {
-            return "There is no puzzle here asking for an answer.";
+            return $"You say, \"{speech}\" but nothing happens.";
         }
 
         if (_state.BrookPuzzleSolved)
@@ -358,13 +358,13 @@ public sealed class MosslightHollowService
             return "The brook puzzle is already solved.";
         }
 
-        if (answer == "7")
+        if (speech == "3, 1, 4" || speech == "3 1 4" || speech == "314" || speech == "three one four" || speech == "three, one, four")
         {
             _state.BrookPuzzleSolved = true;
-            return "The third stone lights up with a soft green glow. A shell beside the brook opens and reveals a brass key.";
+            return "Each of the stones lights up with a soft green glow. A shell beside the brook opens and reveals a brass key.";
         }
 
-        return "The brook splashes in disagreement. Try adding the first two numbered stones again.";
+        return "The brook splashes in disagreement. Try saying something else.";
     }
 
     private static bool TryGetDirection(string command, out string direction)
@@ -415,7 +415,7 @@ public sealed class MosslightHollowService
 
     private static string BuildHelpText()
     {
-        return "Useful commands:\n- look\n- go north, south, east, or west\n- take lantern\n- examine stones\n- answer 7\n- use brass key on gate\n- inventory";
+        return "Useful commands:\n- look\n- go north, south, east, or west\n- take lantern\n- examine stones\n- speak {something}\n- use brass key on gate\n- inventory";
     }
 
     private sealed record Scene(

@@ -9,6 +9,7 @@ export default function MosslightHollowPage() {
   const [isLoadingStory, setIsLoadingStory] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const messagesRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     let isActive = true;
@@ -72,6 +73,14 @@ export default function MosslightHollowPage() {
       behavior: "smooth",
     });
   }, [messages]);
+
+  useEffect(() => {
+    if (isSending || isLoadingStory) {
+      return;
+    }
+
+    inputRef.current?.focus();
+  }, [isSending, isLoadingStory]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -161,9 +170,10 @@ export default function MosslightHollowPage() {
               type="text"
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
-              placeholder={isLoadingStory ? "Gathering the story..." : "Try: look, go east, answer 7, take lantern, or inventory"}
+              placeholder={isLoadingStory ? "Gathering the story..." : "Try: look, go east, take, or inventory"}
               autoComplete="off"
               disabled={isSending || isLoadingStory}
+              ref={inputRef}
             />
             <button type="submit" disabled={isSending || isLoadingStory || !draft.trim()}>
               {isSending ? "Sending..." : "Send"}
