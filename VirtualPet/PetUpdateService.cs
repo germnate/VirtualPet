@@ -40,10 +40,10 @@ public class PetUpdateService : BackgroundService
 
         PetService.TryApplyWindowHealthPenalty(pet);
 
-        if (pet.Hunger > 80)
+        if (pet.Hunger > 50)
             pet.Happiness = Math.Max(0, pet.Happiness - 1);
 
-        if (pet.Energy < 20)
+        if (pet.Energy < 50)
             pet.Happiness = Math.Max(0, pet.Happiness - 1);
         
         if (pet.State == "sleep" && pet.Energy < 100)
