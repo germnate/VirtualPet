@@ -88,6 +88,11 @@ app.MapGet("/pet/story", (MosslightHollowService service) =>
     return Results.Ok(service.GetOpening());
 });
 
+app.MapPost("/pet/story/restart", (MosslightHollowService service) =>
+{
+    return Results.Ok(service.Restart());
+});
+
 app.MapPost("/pet/story", (StoryRequest request, MosslightHollowService service) =>
 {
     var trimmedInput = request.Input?.Trim();

@@ -76,6 +76,15 @@ public sealed class MosslightHollowService
         }
     }
 
+    public StoryResponse Restart()
+    {
+        lock (_syncRoot)
+        {
+            _state = new StoryState();
+            return GetOpening();
+        }
+    }
+
     public StoryResponse ProcessCommand(string input)
     {
         lock (_syncRoot)

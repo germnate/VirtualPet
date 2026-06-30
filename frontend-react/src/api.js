@@ -38,6 +38,12 @@ export function getStoryOpening() {
   return request("/pet/story");
 }
 
+export function restartStory() {
+  return request("/pet/story/restart", {
+    method: "POST",
+  });
+}
+
 export function sendStoryCommand(input) {
   return request("/pet/story", {
     method: "POST",

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getStoryOpening, sendStoryCommand } from "./api";
+import { getStoryOpening, restartStory, sendStoryCommand } from "./api";
 import "./MosslightHollowPage.css";
 
 export default function MosslightHollowPage() {
@@ -7,18 +7,16 @@ export default function MosslightHollowPage() {
   const [draft, setDraft] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [isLoadingStory, setIsLoadingStory] = useState(true);
+  const [isRestarting, setIsRestarting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const messagesRef = useRef(null);
   const inputRef = useRef(null);
 
-  useEffect(() => {
-    let isActive = true;
-
-    async function loadOpening() {
+  async function loadOpening(loader, isActive = () => true) {
       try {
-        const response = await getStoryOpening();
+        const response = await loader();
 
-        if (!isActive) {
+        if (!isActive()) {
           return;
         }
 
@@ -33,7 +31,7 @@ export default function MosslightHollowPage() {
         ]);
         setErrorMessage("");
       } catch (error) {
-        if (!isActive) {
+        if (!isActive()) {
           return;
         }
 
@@ -48,16 +46,20 @@ export default function MosslightHollowPage() {
         ]);
         setErrorMessage(error.message ?? "Unable to open the story right now.");
       } finally {
-        if (isActive) {
+        if (isActive()) {
           setIsLoadingStory(false);
+          setIsRestarting(false);
         }
       }
-    }
+  }
 
-    loadOpening();
+  useEffect(() => {
+    let active = true;
+
+    loadOpening(getStoryOpening, () => active);
 
     return () => {
-      isActive = false;
+      active = false;
     };
   }, []);
 
@@ -75,12 +77,24 @@ export default function MosslightHollowPage() {
   }, [messages]);
 
   useEffect(() => {
-    if (isSending || isLoadingStory) {
+    if (isSending || isLoadingStory || isRestarting) {
       return;
     }
 
     inputRef.current?.focus();
-  }, [isSending, isLoadingStory]);
+  }, [isSending, isLoadingStory, isRestarting]);
+
+  async function handleRestart() {
+    if (isLoadingStory || isSending || isRestarting) {
+      return;
+    }
+
+    setDraft("");
+    setIsRestarting(true);
+    setIsLoadingStory(true);
+    setErrorMessage("");
+    await loadOpening(restartStory);
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -163,6 +177,16 @@ export default function MosslightHollowPage() {
           <label className="story-panel__label" htmlFor="story-command">
             What do you do?
           </label>
+          <div className="story-panel__actions">
+            <button
+              className="story-panel__restart-button"
+              type="button"
+              onClick={handleRestart}
+              disabled={isSending || isLoadingStory || isRestarting}
+            >
+              {isRestarting ? "Restarting..." : "Restart story"}
+            </button>
+          </div>
           <div className="story-panel__input-row">
             <input
               id="story-command"
@@ -172,10 +196,10 @@ export default function MosslightHollowPage() {
               onChange={(event) => setDraft(event.target.value)}
               placeholder={isLoadingStory ? "Gathering the story..." : "Try: look, go east, take, or inventory"}
               autoComplete="off"
-              disabled={isSending || isLoadingStory}
+              disabled={isSending || isLoadingStory || isRestarting}
               ref={inputRef}
             />
-            <button type="submit" disabled={isSending || isLoadingStory || !draft.trim()}>
+            <button type="submit" disabled={isSending || isLoadingStory || isRestarting || !draft.trim()}>
               {isSending ? "Sending..." : "Send"}
             </button>
           </div>

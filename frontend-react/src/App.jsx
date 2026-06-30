@@ -129,10 +129,26 @@ export default function App() {
 
   return (
     <div className="container">
-      <a className="story-link" href="/game">
-        Step Into Mosslight Hollow
-      </a>
-      <HealthMeter health={pet.health} maxHealth={6} />
+      <div className="top-bar">
+        <HealthMeter health={pet.health} maxHealth={6} />
+        <a
+          className="story-link"
+          href="/game"
+          aria-label="Open Mosslight Hollow"
+          title="Open Mosslight Hollow"
+        >
+          <svg
+            className="story-link__icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M7.2 9.1 5.1 11.7h1.2L4.6 14h1.2l-1.4 1.8h2.2V19h1.6v-3.2h2.1L8.9 14h1.2l-1.7-2.3h1.2Z" />
+            <path d="M12 4.2 8.8 8.2h1.8L8.2 11.4H10L7.8 14.3h3.4V19h1.7v-4.7h3.3L14 11.4h1.8l-2.4-3.2h1.8Z" />
+            <path d="m16.8 9.1-2.1 2.6h1.2L14.2 14h1.2L14 15.8h2.2V19h1.6v-3.2h2.1L18.5 14h1.2L18 11.7h1.2Z" />
+          </svg>
+        </a>
+      </div>
       <div className="pet-window">
         <VerticalMeter label="Hunger" value={100 - pet.hunger} color="#0a9c27" />
         <VerticalMeter label="Energy" value={pet.energy} color="#4da6ff" />

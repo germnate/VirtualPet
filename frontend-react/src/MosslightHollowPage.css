@@ -143,6 +143,27 @@
   font-weight: 700;
 }
 
+.story-panel__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.story-panel__restart-button {
+  padding: 0.65rem 0.95rem;
+  border: 1px solid rgba(248, 241, 223, 0.2);
+  border-radius: 999px;
+  background: rgba(248, 241, 223, 0.08);
+  color: #f8f1df;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.story-panel__restart-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .story-panel__input-row {
   display: grid;
   grid-template-columns: 1fr auto;
